@@ -1,17 +1,27 @@
 package com.edteam.reservations.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
-public class Passenger {
-
-    private Long id;
+@Entity
+public class Passenger extends Base {
+    @Column(nullable = false, length = 30)
     private String firstName;
+
+    @Size(min = 1, max = 30)
+    @NotBlank(message = "The last name is required")
+    @Column(nullable = false, length = 30)
     private String lastName;
 
     private String documentNumber;
 
     private String documentType;
 
+    @Past(message = "The birthday must be in the past")
     private LocalDate birthday;
 
     public String getFirstName() {
@@ -54,11 +64,4 @@ public class Passenger {
         this.birthday = birthday;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

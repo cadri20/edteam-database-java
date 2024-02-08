@@ -2,6 +2,8 @@ package com.edteam.reservations.exception;
 
 import com.edteam.reservations.dto.ErrorDTO;
 import com.edteam.reservations.enums.APIError;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,18 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             reasons.add(String.format("%s - %s", error.getField(), error.getDefaultMessage()));
         }
+        return ResponseEntity.status(APIError.VALIDATION_ERROR.getHttpStatus())
+                .body(new ErrorDTO(APIError.VALIDATION_ERROR.getMessage(), reasons));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex,
+            WebRequest request) {
+        List<String> reasons = new ArrayList<>();
+        for (ConstraintViolation error : ex.getConstraintViolations()) {
+            reasons.add(String.format("%s - %s", error.getPropertyPath(), error.getMessage()));
+        }
+
         return ResponseEntity.status(APIError.VALIDATION_ERROR.getHttpStatus())
                 .body(new ErrorDTO(APIError.VALIDATION_ERROR.getMessage(), reasons));
     }

@@ -1,8 +1,13 @@
 package com.edteam.reservations.model;
 
-public class Segment {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
-    private Long id;
+@Entity
+public class Segment extends Base {
+
     private String origin;
 
     private String destination;
@@ -53,11 +58,4 @@ public class Segment {
         this.carrier = carrier;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

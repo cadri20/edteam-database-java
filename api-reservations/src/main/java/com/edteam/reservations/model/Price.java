@@ -1,10 +1,14 @@
 package com.edteam.reservations.model;
 
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
+import java.util.Objects;
 
-public class Price {
+@Entity
+public class Price extends Base {
 
-    private Long id;
+    @Column(nullable = false)
     private BigDecimal totalPrice;
 
     private BigDecimal totalTax;
@@ -35,11 +39,25 @@ public class Price {
         this.basePrice = basePrice;
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Price price = (Price) o;
+        return Objects.equals(getId(), price.getId()) && Objects.equals(totalPrice, price.totalPrice)
+                && Objects.equals(totalTax, price.totalTax) && Objects.equals(basePrice, price.basePrice);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), totalPrice, totalTax, basePrice);
+    }
+
+    @Override
+    public String toString() {
+        return "Price{" + "id=" + getId() + ", totalPrice=" + totalPrice + ", totalTax=" + totalTax + ", basePrice="
+                + basePrice + '}';
     }
 }

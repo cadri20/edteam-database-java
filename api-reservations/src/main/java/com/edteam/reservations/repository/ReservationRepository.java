@@ -2,84 +2,31 @@ package com.edteam.reservations.repository;
 
 import com.edteam.reservations.dto.SearchReservationCriteriaDTO;
 import com.edteam.reservations.model.*;
-import org.springframework.stereotype.Component;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
-@Component
-public class ReservationRepository {
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    static List<Reservation> reservations = new ArrayList<>();
+    String QUERY_FIND_BY_CREATION_DATE = "SELECT r FROM Reservation r WHERE r.creationDate = :creationDate";
 
-    static {
+    @Query(QUERY_FIND_BY_CREATION_DATE)
+    List<Reservation> findByCreationDate(@Param("creationDate") LocalDate creationDate);
 
-        Passenger passenger = new Passenger();
-        passenger.setFirstName("Andres");
-        passenger.setLastName("Sacco");
-        passenger.setId(1L);
-        passenger.setDocumentType("DNI");
-        passenger.setDocumentNumber("12345678");
-        passenger.setBirthday(LocalDate.of(1985, 1, 1));
+    List<Reservation> findByCreationDateAndPassengersFirstName(LocalDate creationDate, String firstName);
 
-        Price price = new Price();
-        price.setBasePrice(BigDecimal.ONE);
-        price.setTotalTax(BigDecimal.ZERO);
-        price.setTotalPrice(BigDecimal.ONE);
+    List<Reservation> findByCreationDateAndPassengersFirstNameAndPassengersLastName(LocalDate creationDate,
+            String firstName, String lastName);
 
-        Segment segment = new Segment();
-        segment.setArrival("2025-01-01");
-        segment.setDeparture("2024-12-31");
-        segment.setOrigin("EZE");
-        segment.setDestination("MIA");
-        segment.setCarrier("AA");
-        segment.setId(1L);
+    @Transactional(readOnly = true, timeout = 1000)
+    List<Reservation> findAll(Specification<Reservation> specification, Pageable pageable);
 
-        Itinerary itinerary = new Itinerary();
-        itinerary.setId(1L);
-        itinerary.setPrice(price);
-        itinerary.setSegment(List.of(segment));
+    List<Reservation> findAllByOrderByCreationDateAsc();
 
-        Reservation reservation = new Reservation();
-        reservation.setId(1L);
-        reservation.setPassengers(List.of(passenger));
-        reservation.setItinerary(itinerary);
-        reservation.setCreationDate(LocalDate.now());
-
-        reservations.add(reservation);
-    }
-
-    public List<Reservation> getReservations(SearchReservationCriteriaDTO criteria) {
-        return reservations;
-    }
-
-    public Optional<Reservation> getReservationById(Long id) {
-        List<Reservation> result = reservations.stream().filter(reservation -> Objects.equals(reservation.getId(), id))
-                .toList();
-
-        Reservation reservation = !result.isEmpty() ? result.get(0) : null;
-        return Optional.ofNullable(reservation);
-    }
-
-    public Reservation save(Reservation reservation) {
-        reservation.setId((long) (reservations.size() + 1));
-        reservations.add(reservation);
-        return reservation;
-    }
-
-    public Reservation update(Long id, Reservation reservation) {
-        List<Reservation> result = reservations.stream().filter(reser -> reser.getId().equals(id)).toList();
-        result.get(0).setId(reservation.getId());
-        result.get(0).setItinerary(reservation.getItinerary());
-        result.get(0).setPassengers(reservation.getPassengers());
-
-        return result.get(0);
-    }
-
-    public void delete(Long id) {
-        List<Reservation> result = reservations.stream().filter(reservation -> reservation.getId().equals(id)).toList();
-
-        reservations.remove(result.get(0));
-    }
 }

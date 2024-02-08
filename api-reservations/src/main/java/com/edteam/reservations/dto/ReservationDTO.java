@@ -7,6 +7,15 @@ public class ReservationDTO {
 
     private Long id;
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    private Long version;
     private List<PassengerDTO> passengers;
 
     private ItineraryDTO itinerary;

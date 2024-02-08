@@ -9,6 +9,26 @@ public class SearchReservationCriteriaDTO {
 
     private LocalDate reservationDate;
 
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
+
+    public String getSortDirection() {
+        return sortDirection;
+    }
+
+    public void setSortDirection(String sortDirection) {
+        this.sortDirection = sortDirection;
+    }
+
+    private String sortField;
+
+    private String sortDirection;
+
+    private Integer pageActual = 0;
+
+    private Integer pageSize = 10;
+
     public Long getItineraryId() {
         return itineraryId;
     }
@@ -39,5 +59,25 @@ public class SearchReservationCriteriaDTO {
 
     public void setReservationDate(LocalDate reservationDate) {
         this.reservationDate = reservationDate;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public Integer getPageActual() {
+        return pageActual;
+    }
+
+    public void setPageActual(Integer pageActual) {
+        this.pageActual = pageActual;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 }
